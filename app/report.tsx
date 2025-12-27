@@ -1,8 +1,8 @@
+import ExpenseCard from "@/components/ExpenseCard";
 import { gradients } from "@/context/gradients";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/themeContext";
 import { Expense, getExpenses, getExpensesRange } from "@/db/expenses";
 import { DateRangeType, getDateRange } from "@/utiles/dateRange";
-import ExpenseCard from "@/utiles/ExpenseCard";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";

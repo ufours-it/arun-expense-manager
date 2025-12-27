@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeProvider } from "@/context/themeContext";
 import { initDB } from "@/db/database";
 import { Stack } from "expo-router";
 import { useEffect } from "react";

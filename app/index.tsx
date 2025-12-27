@@ -1,15 +1,15 @@
-import Dropdown from "@/utiles/Dropdown";
-import ExpenseCard from "@/utiles/ExpenseCard";
+import Dropdown from "@/components/Dropdown";
+import ExpenseCard from "@/components/ExpenseCard";
 import { gradients } from "@/context/gradients";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/themeContext";
 import { Expense, getExpenses, getExpensesRange } from "@/db/expenses";
+import { DateRangeType, getDateRange } from "@/utiles/dateRange";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Text, View, StyleSheet, ScrollView, Pressable, FlatList, ActivityIndicator, Image } from "react-native";
+import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-chart-kit";
-import { DateRangeType, getDateRange } from "@/utiles/dateRange";
 
 export default function Report() {
   const { theme, toggleTheme } = useTheme();
@@ -134,6 +134,8 @@ export default function Report() {
 
   useFocusEffect(
     useCallback(() => {
+      setExpenses([]);
+      setTotal(0)
       loadExpenses();
     }, [range])
   );
