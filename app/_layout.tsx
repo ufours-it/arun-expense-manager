@@ -1,24 +1,30 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { ThemeProvider } from "@/context/ThemeContext";
+import { initDB } from "@/db/database";
+import { Stack } from "expo-router";
+import { useEffect } from "react";
+import Toast from "react-native-toast-message";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  useEffect(() => {
+    (async () => {
+      await initDB();
+      console.log("Database initialized");
+    })();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <ThemeProvider>
+      <Stack
+        screenOptions={{
+          animation: "fade",
+          headerShown: false
+        }}
+      >
+        <Stack.Screen name="index" options={{ title: "Home" }} />
+        <Stack.Screen name="addEntry" options={{ title: "AddEntry" }} />
+        <Stack.Screen name="report" options={{ title: "Report" }} />
       </Stack>
-      <StatusBar style="auto" />
+      <Toast />
     </ThemeProvider>
-  );
+  )
 }
