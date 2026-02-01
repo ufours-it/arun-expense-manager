@@ -27,9 +27,9 @@
           "image": "./assets/images/budget.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#cba5f7",
+          "backgroundColor": "#ffffff",
           "dark": {
-            "backgroundColor": "#24243e"
+            "backgroundColor": "#000000"
           }
         }
       ]
