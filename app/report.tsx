@@ -1,6 +1,6 @@
 import ExpenseCard from "@/components/ExpenseCard";
 import { gradients } from "@/context/gradients";
-import { useTheme } from "@/context/themeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Expense, getExpenses, getExpensesRange } from "@/db/expenses";
 import { DateRangeType, getDateRange } from "@/utiles/dateRange";
 import { Ionicons } from "@expo/vector-icons";

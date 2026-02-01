@@ -3,13 +3,29 @@ export type DateRangeType =
    | "week"
    | "month"
    | "year"
-   | "all";
+   | "all"
+   | "date";
 
-export const getDateRange = (range: DateRangeType) => {
+export const getDateRange = (range: DateRangeType, date: Date | null) => {
 
    if (range === "all") {
       return { start: null, end: null };
    }
+
+   if (range === "date") {
+      if (!date) {
+         return { start: null, end: null };
+      }
+
+      let start = new Date(date);
+      let end = new Date(date);
+
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+
+      return { start, end };
+   }
+
    const now = new Date();
    let start = new Date(now);
    let end = new Date(now);

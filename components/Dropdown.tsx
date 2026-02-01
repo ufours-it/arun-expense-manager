@@ -8,7 +8,6 @@ import {
    ViewStyle,
    Modal,
    TouchableWithoutFeedback,
-   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -25,8 +24,6 @@ type Props = {
    selectStyle?: StyleProp<ViewStyle>;
    dropdownStyle?: StyleProp<ViewStyle>;
 };
-
-const screenWidth = Dimensions.get("window").width;
 
 export default function Dropdown({
    value,
@@ -87,7 +84,7 @@ export default function Dropdown({
                      style={[
                         styles.dropdown,
                         {
-                           top: position.y + position.height + 10,
+                           top: position.y + position.height + 25,
                            left: position.x,
                            width: position.width,
                         },

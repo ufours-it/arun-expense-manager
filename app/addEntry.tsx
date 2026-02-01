@@ -1,6 +1,6 @@
 import Dropdown from "@/components/Dropdown";
 import { gradients } from "@/context/gradients";
-import { useTheme } from "@/context/themeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { addExpense, deleteExpense, updateExpense } from "@/db/expenses";
 import { showToast } from "@/utiles/toastMessage";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
@@ -241,6 +241,7 @@ export default function AddEntry() {
                            <DateTimePickerModal
                               isVisible={showDatePicker}
                               mode="date"
+                              maximumDate={new Date()} 
                               onConfirm={(date) => {
                                  setFieldValue("date", date);
                                  setShowDatePicker(false);

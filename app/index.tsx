@@ -1,7 +1,7 @@
 import Dropdown from "@/components/Dropdown";
 import ExpenseCard from "@/components/ExpenseCard";
 import { gradients } from "@/context/gradients";
-import { useTheme } from "@/context/themeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Expense, getExpenses, getExpensesRange } from "@/db/expenses";
 import { DateRangeType, getDateRange } from "@/utiles/dateRange";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,6 +10,7 @@ import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-chart-kit";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function Report() {
   const { theme, toggleTheme } = useTheme();
@@ -17,15 +18,24 @@ export default function Report() {
   const router = useRouter();
   
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [range, setRange] = useState<DateRangeType>("all");
+  const [range, setRange] = useState<DateRangeType>("today");
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickDate, setDatePickDate] = useState<Date | null>(null);
 
-  const today = new Date().toLocaleDateString("en-GB", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-  });
+  const formatReadableDate = (date: Date) => {
+    return date.toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+    });
+  };
+
+  const isSameDay = (d1: Date, d2: Date) =>
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 
   const options = [
     { label: "Today", value: "today" },
@@ -33,6 +43,7 @@ export default function Report() {
     { label: "Month", value: "month" },
     { label: "Year", value: "year" },
     { label: "All", value: "all" },
+    { label: "Date", value: "date" },
   ];
 
   const CATEGORY_OPTIONS = [
@@ -51,7 +62,7 @@ export default function Report() {
     if (loading) return;
     setLoading(true);
 
-    const { start, end } = getDateRange(range);
+    const { start, end } = getDateRange(range, datePickDate);
     let rows;
     if (!start || !end) {
         rows = await getExpenses();
@@ -132,12 +143,22 @@ export default function Report() {
     formatYLabel: (yValue: string) => "   ₹ " + formatAmount(Number(yValue), { compact: true }),
   };
 
+  const handleDropDown = (val: DateRangeType) => {
+    if(val === "date"){
+      setShowDatePicker(true);
+    }
+    else {
+      setDatePickDate(null);
+      setRange(val);
+    }
+  }
+
   useFocusEffect(
     useCallback(() => {
       setExpenses([]);
       setTotal(0)
       loadExpenses();
-    }, [range])
+    }, [range, datePickDate])
   );
 
   return (
@@ -164,7 +185,7 @@ export default function Report() {
             color={theme === "dark" ? "white" : "black"}
             style={{ marginRight: 6 }}
             />
-            <Text style={styles.dateTop}>{today}</Text>
+          <Text style={styles.dateTop}>{formatReadableDate(new Date())}</Text>
         </View>
 
         <Link href="/addEntry" asChild>
@@ -192,7 +213,7 @@ export default function Report() {
         <View style={styles.rightCard}>
             <Dropdown
               value={range}
-              onChange={(val: string) => setRange(val as DateRangeType)}
+              onChange={(val: string) => handleDropDown(val as DateRangeType)}
               options={options}
             />
         </View>
@@ -211,6 +232,7 @@ export default function Report() {
               resizeMode="contain"
             />
             <Text style={styles.emptyText}>No expenses found</Text>
+            <Text style={styles.emptyText}>Dev by Arunts</Text>
           </View>
         )}
 
@@ -231,10 +253,33 @@ export default function Report() {
         )}
       </View>
 
+      {/* Date picker */}
+      <DateTimePickerModal
+        isVisible={showDatePicker}
+        mode="date"
+        maximumDate={new Date()} 
+        onConfirm={(date) => {
+          const today = new Date();
+
+          if (isSameDay(date, today)) {
+            setRange("today");  
+            setDatePickDate(null);
+          } else {
+            setRange("date");
+            setDatePickDate(date);
+          }
+          setShowDatePicker(false);
+        }}
+        onCancel={() => setShowDatePicker(false)}
+      />
+
       {/* Expenses */}
       {(expenses.length > 0 && !loading) && 
         <View style={styles.expensesView}>
-          <Text style={styles.expensesText}>{options.find(o => o.value === range)?.label} Expenses</Text>
+          <Text style={styles.expensesText}>
+            {datePickDate ? formatReadableDate(datePickDate) : options.find(o => o.value === range)?.label } {" "}
+            Expenses
+          </Text>
             {expenses.length > 5 && 
               <Pressable onPress={() =>
                 router.push({
@@ -351,9 +396,9 @@ const getStyles = (theme: string) =>
       height: 260,
     },
     emptyText: {
-        textAlign: "center",
-        marginTop: 30,
-        color: "#999",
+      textAlign: "center",
+      marginTop: 30,
+      color: "#535353",
     },
 
     expensesView: {
